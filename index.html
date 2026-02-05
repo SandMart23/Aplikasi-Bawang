@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bawang Goreng Store</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon-small">🧅</div>
+                <h2 class="logo-text">Bawang Goreng Store</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <p class="nav-section-title">CORE</p>
+                
+                <a href="index.html" class="nav-item active">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">Stok Barang</span>
+                </a>
+                
+                <a href="scan-barcode.html" class="nav-item">
+                    <span class="nav-icon">📷</span>
+                    <span class="nav-text">Scan Barcode</span>
+                </a>
+                
+                <a href="generator.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span>
+                    <span class="nav-text">Generator Barcode</span>
+                </a>
+                
+                <a href="penjualan.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Laporan Penjualan</span>
+                </a>
+            </div>
+
+            <div class="nav-section nav-section-bottom">
+                <a href="#" class="nav-item logout" onclick="handleLogout(event)">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1 class="page-title">Stok Barang</h1>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <button class="btn-primary" onclick="openAddModal()">
+                        <span class="btn-icon">+</span>
+                        Tambah Barang
+                    </button>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Barang</th>
+                                    <th>Barcode</th>
+                                    <th>Deskripsi</th>
+                                    <th>Stok</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Data akan ditampilkan di sini -->
+                            </tbody>
+                        </table>
+                        
+                        <div class="empty-state" id="emptyState">
+                            <div class="empty-icon">📦</div>
+                            <p>Belum ada data barang</p>
+                            <p class="empty-subtitle">Klik tombol "Tambah Barang" untuk menambahkan data</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Tambah/Edit Barang -->
+    <div class="modal" id="itemModal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Tambah Barang</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="itemName">Nama Barang</label>
+                        <input type="text" id="itemName" required placeholder="Masukkan nama barang">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemBarcode">Barcode</label>
+                        <input type="text" id="itemBarcode" required placeholder="Masukkan barcode">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemDescription">Deskripsi</label>
+                        <textarea id="itemDescription" rows="3" placeholder="Masukkan deskripsi barang"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemStock">Stok</label>
+                        <input type="number" id="itemStock" required min="0" placeholder="Masukkan jumlah stok">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+                        <button type="submit" class="btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

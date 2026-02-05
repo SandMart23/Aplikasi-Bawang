@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Barcode - Bawang Goreng Store</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        .scanner-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .scanner-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: scaleIn 0.5s ease;
+        }
+
+        .scanner-info {
+            background: linear-gradient(135deg, #e8d5c4 0%, #d4b5a0 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .scanner-info-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .scanner-info p {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid #e0e0e0;
+        }
+
+        .scanner-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-scanner {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .btn-start {
+            background: #28a745;
+            color: white;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-start:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-stop {
+            background: #dc3545;
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-stop:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+        }
+
+        .scan-result {
+            background: #f5f5f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        .scan-result.show {
+            display: block;
+        }
+
+        .scan-result h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: #2d3748;
+        }
+
+        .scan-result p {
+            margin: 8px 0;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        /* Modal Quantity */
+        .qty-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .qty-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .qty-modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .qty-modal-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: bounce 0.6s ease;
+        }
+
+        .qty-modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0 0 8px 0;
+        }
+
+        .qty-modal-subtitle {
+            font-size: 15px;
+            color: #7f8c8d;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .qty-input-group {
+            margin: 25px 0;
+        }
+
+        .qty-input-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .qty-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f5f5f0;
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .qty-btn {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: white;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff6b35;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .qty-btn:hover {
+            background: #ff6b35;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .qty-btn:active {
+            transform: scale(0.95);
+        }
+
+        .qty-input {
+            flex: 1;
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #2c3e50;
+            border: none;
+            background: transparent;
+            padding: 8px;
+        }
+
+        .qty-input:focus {
+            outline: none;
+        }
+
+        .qty-stock-info {
+            background: #e6fffa;
+            border: 2px solid #81e6d9;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #234e52;
+            font-weight: 600;
+        }
+
+        .qty-modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .qty-modal-actions button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel {
+            background: #7f8c8d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #6c757d;
+            transform: translateY(-2px);
+        }
+
+        .btn-confirm {
+            background: #ff6b35;
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-confirm:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Success Popup */
+        .success-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-popup.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-content {
+            background: white;
+            border-radius: 20px;
+            padding: 45px;
+            text-align: center;
+            animation: successPop 0.5s ease;
+            max-width: 400px;
+        }
+
+        @keyframes successPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: rotate 0.5s ease;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(-180deg); }
+            to { transform: rotate(0); }
+        }
+
+        .success-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #28a745;
+            margin: 0 0 12px 0;
+        }
+
+        .success-detail {
+            font-size: 16px;
+            color: #4a5568;
+            margin: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .scanner-card {
+                padding: 20px;
+            }
+
+            .scanner-controls {
+                flex-direction: column;
+            }
+
+            .btn-scanner {
+                width: 100%;
+            }
+
+            .qty-modal-content {
+                padding: 25px;
+            }
+
+            .success-content {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon-small">🧅</div>
+                <h2 class="logo-text">Bawang Goreng Store</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <p class="nav-section-title">CORE</p>
+                
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">Stok Barang</span>
+                </a>
+                
+                <a href="scan-barcode.html" class="nav-item active">
+                    <span class="nav-icon">📷</span>
+                    <span class="nav-text">Scan Barcode</span>
+                </a>
+                
+                <a href="generator.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span>
+                    <span class="nav-text">Generator Barcode</span>
+                </a>
+                
+                <a href="penjualan.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Laporan Penjualan</span>
+                </a>
+            </div>
+
+            <div class="nav-section nav-section-bottom">
+                <a href="#" class="nav-item logout" onclick="handleLogout(event)">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1 class="page-title">Scan Barcode</h1>
+            </div>
+
+            <div class="scanner-container">
+                <div class="scanner-card">
+                    <div class="scanner-info">
+                        <div class="scanner-info-icon">📷</div>
+                        <p>Arahkan kamera ke barcode produk untuk melakukan scanning</p>
+                    </div>
+
+                    <div id="reader"></div>
+
+                    <div class="scanner-controls">
+                        <button class="btn-scanner btn-start" id="startBtn" onclick="startScanner()">
+                            ▶️ Mulai Scan
+                        </button>
+                        <button class="btn-scanner btn-stop hidden" id="stopBtn" onclick="stopScanner()">
+                            ⏹️ Berhenti
+                        </button>
+                    </div>
+
+                    <div class="scan-result" id="scanResult">
+                        <h3>Hasil Scan:</h3>
+                        <p id="resultText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Input Quantity -->
+    <div class="qty-modal" id="qtyModal">
+        <div class="qty-modal-content">
+            <div class="qty-modal-header">
+                <div class="qty-modal-icon">✅</div>
+                <h2 class="qty-modal-title">Barcode Terdeteksi!</h2>
+                <p class="qty-modal-subtitle" id="qtyModalSubtitle"></p>
+            </div>
+
+            <div class="qty-stock-info" id="qtyStockInfo"></div>
+
+            <div class="qty-input-group">
+                <label>Jumlah Barang:</label>
+                <div class="qty-input-wrapper">
+                    <button class="qty-btn" onclick="decreaseQty()">−</button>
+                    <input type="number" class="qty-input" id="qtyInput" value="1" min="1" readonly>
+                    <button class="qty-btn" onclick="increaseQty()">+</button>
+                </div>
+            </div>
+
+            <div class="qty-modal-actions">
+                <button class="btn-cancel" onclick="closeQtyModal()">Batal</button>
+                <button class="btn-confirm" onclick="confirmScan()">Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Popup -->
+    <div class="success-popup" id="successPopup">
+        <div class="success-content">
+            <div class="success-icon">✅</div>
+            <p class="success-text">Berhasil!</p>
+            <p class="success-detail" id="successDetail"></p>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+
+        // Handle logout
+        function handleLogout(event) {
+            if (event) event.preventDefault();
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        }
+
+        let html5QrcodeScanner;
+        let isScanning = false;
+        let currentScannedItem = null;
+
+        // Hamburger menu
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (hamburger) {
+            hamburger.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                    hamburger.classList.remove('active');
+                }
+            }
+        });
+
+        function startScanner() {
+            if (isScanning) return;
+
+            const config = { 
+                fps: 10, 
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+
+            html5QrcodeScanner = new Html5Qrcode("reader");
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                onScanError
+            ).then(() => {
+                isScanning = true;
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('stopBtn').classList.remove('hidden');
+            }).catch(err => {
+                alert(`Error starting scanner: ${err}`);
+            });
+        }
+
+        function stopScanner() {
+            if (!isScanning) return;
+
+            html5QrcodeScanner.stop().then(() => {
+                isScanning = false;
+                document.getElementById('startBtn').classList.remove('hidden');
+                document.getElementById('stopBtn').classList.add('hidden');
+                document.getElementById('scanResult').classList.remove('show');
+            }).catch(err => {
+                console.error('Error stopping scanner:', err);
+            });
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Find item in localStorage
+            const items = JSON.parse(localStorage.getItem('bawangGorenStoreItems') || '[]');
+            const item = items.find(i => i.barcode === decodedText);
+
+            if (item) {
+                currentScannedItem = item;
+                showQtyModal(item);
+                
+                // Pause scanner temporarily
+                if (isScanning) {
+                    html5QrcodeScanner.pause(true);
+                }
+            } else {
+                document.getElementById('resultText').textContent = 
+                    `Barcode: ${decodedText} - Barang tidak ditemukan!`;
+                document.getElementById('scanResult').classList.add('show');
+                
+                setTimeout(() => {
+                    document.getElementById('scanResult').classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function onScanError(errorMessage) {
+            // Ignore scan errors (happens frequently during scanning)
+        }
+
+        function showQtyModal(item) {
+            document.getElementById('qtyModalSubtitle').textContent = item.name;
+            document.getElementById('qtyStockInfo').textContent = 
+                `Stok tersedia: ${item.stock} unit`;
+            document.getElementById('qtyInput').value = 1;
+            document.getElementById('qtyInput').max = item.stock;
+            document.getElementById('qtyModal').classList.add('show');
+        }
+
+        function closeQtyModal() {
+            document.getElementById('qtyModal').classList.remove('show');
+            currentScannedItem = null;
+            
+            // Resume scanner
+            if (isScanning) {
+                html5QrcodeScanner.resume();
+            }
+        }
+
+        function increaseQty() {
+            const input = document.getElementById('qtyInput');
+            const max = parseInt(input.max);
+            const current = parseInt(input.value);
+            
+            if (current < max) {
+                input.value = current + 1;
+            }
+        }
+
+        function decreaseQty() {
+            const input = document.getElementById('qtyInput');
+            const current = parseInt(input.value);
+            
+            if (current > 1) {
+                input.value = current - 1;
+            }
+        }
+
+        function confirmScan() {
+            const qty = parseInt(document.getElementById('qtyInput').value);
+            
+            if (!currentScannedItem || qty <= 0) return;
+
+            // Update stock in localStorage
+            const items = JSON.parse(localStorage.getItem('bawangGorenStoreItems') || '[]');
+            const itemIndex = items.findIndex(i => i.barcode === currentScannedItem.barcode);
+            
+            if (itemIndex !== -1) {
+                if (items[itemIndex].stock >= qty) {
+                    items[itemIndex].stock -= qty;
+                    localStorage.setItem('bawangGorenStoreItems', JSON.stringify(items));
+                    
+                    // Close qty modal
+                    closeQtyModal();
+                    
+                    // Show success popup
+                    showSuccessPopup(currentScannedItem.name, qty);
+                    
+                    currentScannedItem = null;
+                } else {
+                    alert('Stok tidak mencukupi!');
+                }
+            }
+        }
+
+        function showSuccessPopup(itemName, qty) {
+            document.getElementById('successDetail').textContent = 
+                `${qty} unit ${itemName} berhasil dikurangi dari stok`;
+            document.getElementById('successPopup').classList.add('show');
+            
+            setTimeout(() => {
+                document.getElementById('successPopup').classList.remove('show');
+                
+                // Resume scanner
+                if (isScanning) {
+                    html5QrcodeScanner.resume();
+                }
+            }, 2000);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

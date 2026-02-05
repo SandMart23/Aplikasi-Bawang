@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Barcode - Bawang Goreng Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="generator-style.css">
+    <!-- JsBarcode Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon-small">🧅</div>
+                <h2 class="logo-text">Bawang Goreng Store</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <p class="nav-section-title">CORE</p>
+                
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">Stok Barang</span>
+                </a>
+                
+                <a href="scan-barcode.html" class="nav-item">
+                    <span class="nav-icon">📷</span>
+                    <span class="nav-text">Scan Barcode</span>
+                </a>
+                
+                <a href="generator.html" class="nav-item active">
+                    <span class="nav-icon">🏷️</span>
+                    <span class="nav-text">Generator Barcode</span>
+                </a>
+                
+                <a href="penjualan.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Laporan Penjualan</span>
+                </a>
+            </div>
+
+            <div class="nav-section nav-section-bottom">
+                <a href="login.html" class="nav-item logout">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1 class="page-title">Generator Barcode</h1>
+            </div>
+
+            <div class="generator-container">
+                <!-- Form Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🏷️</span>
+                            Form Generator Barcode
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="barcodeForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="variant">Varian Produk <span class="required">*</span></label>
+                                    <select id="variant" required>
+                                        <option value="">Pilih Varian</option>
+                                        <option value="original">Original</option>
+                                        <option value="pedas">Pedas</option>
+                                        <option value="manis">Manis</option>
+                                        <option value="asin">Asin</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="weight">Berat (gram)</label>
+                                    <select id="weight">
+                                        <option value="100">100 gram</option>
+                                        <option value="250" selected>250 gram</option>
+                                        <option value="500">500 gram</option>
+                                        <option value="1000">1 kg</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="price">Harga (Rp) <span class="required">*</span></label>
+                                    <input 
+                                        type="number" 
+                                        id="price" 
+                                        placeholder="Masukkan harga"
+                                        min="0"
+                                        step="1000"
+                                        required
+                                    >
+                                    <div class="price-preview" id="pricePreview"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productionDate">Tanggal Produksi <span class="required">*</span></label>
+                                    <input 
+                                        type="date" 
+                                        id="productionDate" 
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiryDays">Masa Kadaluarsa</label>
+                                    <select id="expiryDays">
+                                        <option value="30">30 Hari</option>
+                                        <option value="60" selected>60 Hari</option>
+                                        <option value="90">90 Hari</option>
+                                        <option value="180">180 Hari</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quantity">Jumlah Produk <span class="required">*</span></label>
+                                    <input 
+                                        type="number" 
+                                        id="quantity" 
+                                        placeholder="Masukkan jumlah stok"
+                                        min="1"
+                                        max="10000"
+                                        value="1"
+                                        required
+                                    >
+                                    <div class="quantity-info">Jumlah ini akan ditambahkan ke stok</div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="resetForm()">
+                                    <span class="btn-icon">🔄</span>
+                                    Reset
+                                </button>
+                                <button type="submit" class="btn-primary" id="generateBtn" disabled>
+                                    <span class="btn-icon">✨</span>
+                                    Generate Barcode
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="card" id="previewCard" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">👁️</span>
+                            Preview Barcode
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="barcode-preview-single" id="barcodePreview">
+                            <!-- Single Barcode Label -->
+                            <div class="barcode-label" id="barcodeLabel">
+                                <div class="label-header">
+                                    <div class="brand-info">
+                                        <div class="brand-logo">🧅</div>
+                                        <div class="brand-name">Bawang Goreng Store</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="barcode-container">
+                                    <svg id="barcode"></svg>
+                                    <div class="barcode-number" id="barcodeNumber">1234567890123</div>
+                                </div>
+                                
+                                <div class="label-footer">
+                                    <p>Produk Berkualitas Premium</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stock-info" id="stockInfo">
+                            <div class="info-badge">
+                                <span class="badge-icon">📦</span>
+                                <div class="badge-content">
+                                    <span class="badge-label">Jumlah Stok Ditambahkan:</span>
+                                    <span class="badge-value" id="stockAdded">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-actions">
+                            <button type="button" class="btn-success" onclick="printBarcode()">
+                                <span class="btn-icon">🖨️</span>
+                                Print Barcode
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="generateBarcode()">
+                                <span class="btn-icon">🔄</span>
+                                Generate Ulang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div class="card info-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">💡</span>
+                            Informasi
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-content">
+                            <div class="info-item">
+                                <span class="info-icon">📋</span>
+                                <p>Pilih varian, masukkan harga, tanggal produksi, dan jumlah barcode yang ingin di-generate</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">🔢</span>
+                                <p>Setiap barcode akan unik dan otomatis menambahkan stok ke dashboard</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">📦</span>
+                                <p>Jumlah barcode yang di-generate akan otomatis menambah stok barang di sistem</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">🖨️</span>
+                                <p>Setelah barcode ter-generate, Anda dapat langsung mencetak semua barcode sekaligus</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="generator-script.js"></script>
+</body>
+</html>

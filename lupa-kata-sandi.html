@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lupa Kata Sandi - Bawang Goreng Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8d5c4 0%, #d4b5a0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #f5f5f0;
+            border-radius: 30px;
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #fbb03b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo-icon::before {
+            content: '🧅';
+            font-size: 45px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            width: 25px;
+            height: 15px;
+            background: linear-gradient(135deg, #8b6f47 0%, #a0826d 100%);
+            border-radius: 50% 50% 0 0;
+        }
+
+        h1 {
+            color: #ff6b35;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 16px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-reset:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-reset:active {
+            transform: translateY(0);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .back-link a {
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .info-box {
+            background: #fff4ed;
+            border-left: 4px solid #ff6b35;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #155724;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <h1>Lupa Kata Sandi</h1>
+            <p class="subtitle">Masukkan email yang terdaftar untuk mereset kata sandi Anda</p>
+        </div>
+
+        <div class="info-box">
+            📧 Kami akan mengirimkan link untuk mereset kata sandi ke email Anda.
+        </div>
+
+        <div id="successMessage" class="success-message">
+            ✅ Link reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam.
+        </div>
+
+        <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="nama@email.com"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-reset">Kirim Link Reset</button>
+
+            <div class="back-link">
+                Kembali ke <a href="login.html">Halaman Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function handleForgotPassword(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+
+            // Validasi email
+            if (!email) {
+                alert('Mohon masukkan email!');
+                return;
+            }
+
+            // Simulasi pengiriman email reset - nanti bisa diganti dengan backend sesungguhnya
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('show');
+            
+            // Disable form
+            document.getElementById('forgotPasswordForm').innerHTML = `
+                <div style="text-align: center; padding: 20px 0;">
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Email telah dikirim ke <strong>${email}</strong>
+                    </p>
+                    <a href="login.html" style="
+                        display: inline-block;
+                        padding: 12px 30px;
+                        background: #ff6b35;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        transition: all 0.3s;
+                    " onmouseover="this.style.background='#e55a2b'" 
+                       onmouseout="this.style.background='#ff6b35'">
+                        Kembali ke Login
+                    </a>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
